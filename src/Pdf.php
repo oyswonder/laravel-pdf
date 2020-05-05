@@ -1,6 +1,6 @@
 <?php
 
-namespace NahidulHasan\Html2pdf;
+namespace oyswonder\Html2pdf;
 
 /**
  * Laravel htm2pdf: convert html into pdf
@@ -10,6 +10,16 @@ namespace NahidulHasan\Html2pdf;
  */
 class Pdf
 {
+
+    protected $system ;
+
+    protected $isWindows;
+
+    public function __construct()
+    {
+        $this->system = php_uname('s');
+        $this->isWindows = $this->system === 'Windows NT';
+    }
 
     /**
      * Convert html into pdf
@@ -21,16 +31,13 @@ class Pdf
     {
         $key = time() . '-' . rand(10000, 99999);
 
-        $htmlFile = storage_path() . '/page-' . $key . '.html';
-        $pdfFile = storage_path() . '/page-' . $key . '.pdf';
+        $pdfFile = storage_path() . DIRECTORY_SEPARATOR . 'page-' . $key . '.pdf';
 
-        file_put_contents($htmlFile, $input);
+        $generatedFile = $this->executeCommand($input, $pdfFile);
 
-        $generatedFile = $this->executeCommand($htmlFile, $pdfFile);
+        $this->removeAndReturnFile($pdfFile);
 
-        $file = $generatedFile ? : '';
-
-        return $this->removeAndReturnFile($htmlFile, $pdfFile, $file);
+        return $generatedFile;
 
     }
 
@@ -71,17 +78,13 @@ class Pdf
     /**
      * Removed generated file and return
      *
-     * @param $htmlFile
      * @param $pdfFile
-     * @param $file
      * @return mixed
      */
-    public function removeAndReturnFile($htmlFile, $pdfFile, $file)
+    protected function removeAndReturnFile($pdfFile)
     {
-        shell_exec("rm {$htmlFile}");
-        shell_exec("rm {$pdfFile}");
-
-        return $file;
+        $rmCmd = $this->returnRemoveCommand();
+        shell_exec($rmCmd . $pdfFile);
     }
 
     /**
@@ -91,13 +94,31 @@ class Pdf
      */
     public function executeCommand($htmlFile, $pdfFile)
     {
-        if (shell_exec("xvfb-run wkhtmltopdf {$htmlFile} {$pdfFile}")) {
-            $generatedFile = file_get_contents($pdfFile);
-        } elseif (shell_exec("wkhtmltopdf {$htmlFile} {$pdfFile}")) {
-            $generatedFile = file_get_contents($pdfFile);
-        } else {
-            $generatedFile = '';
+        if($this->isWindows){
+            exec("wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+        }else{
+            exec("xvfb-run wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+            if($code !==0){
+                exec("wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+            }
         }
+
+        if($code === 0){
+            $generatedFile = file_get_contents($pdfFile);
+        }else{
+            $generatedFile = 'E';
+        }
+
         return $generatedFile;
+    }
+
+    /**
+     * Return Remove Command
+     *
+     * @return string
+     */
+    protected function returnRemoveCommand()
+    {
+        return $this->isWindows ? 'del ' : 'rm ';
     }
 }

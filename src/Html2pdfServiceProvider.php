@@ -1,6 +1,6 @@
 <?php
 
-namespace NahidulHasan\Html2pdf;
+namespace oyswonder\Html2pdf;
 
 use Illuminate\Support\ServiceProvider;
 

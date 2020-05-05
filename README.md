@@ -8,17 +8,17 @@
 
 
 
-> A Simple package for easily generating PDF documents from HTML.This package is specially for laravel but you can use this without laravel.
+> 一个简单的包，用于把HTML页面生成为PDF文档。该程序包专门用于laravel，但您可以在不使用laravel的情况下使用。
+> 此包是基于 [nahidulhasan/laravel-pdf](https://github.com/nahidulhasan/laravel-pdf) 上修改的。
 
+## 安装
 
-## Installation
+#### 安装 wkhtmltopdf 
 
-#### Install wkhtmltopdf 
+经以下系统测试:
 
-This was tested on:
-
-- Ubuntu 14.04 x64
-- Ubuntu 16.04 x64
+- Ubuntu 18.04.3 x64
+- Windows 10 x64
 
 ```sh
 sudo apt-get update
@@ -30,73 +30,45 @@ sudo apt-get install xvfb libfontconfig wkhtmltopdf
 RUN apt-get update && apt-get install xvfb libfontconfig wkhtmltopdf
 ```
 
+#### Windows 可在官网直接下载安装包安装
+https://wkhtmltopdf.org/downloads.html
+
 #### Upddate Composer
 ```
-composer require nahidulhasan/html2pdf
+composer require oyswonder/html2pdf
 ```
 
-If laravel version < 5.5, add the ServiceProvider to the providers array in config/app.php
+如果 laravel 版本<5.5，请将 ServiceProvider 添加到 config/app.php 中的 providers 数组中
 
-    NahidulHasan\Html2pdf\Html2pdfServiceProvider::class,
+    oyswonder\Html2pdf\Html2pdfServiceProvider::class,
 
-You can optionally use the facade for shorter code. Add this to your facades:
+您可以选择将 facade 用于较短的代码。把这个加到你的 facades 上:
 
-    'Pdf'  => NahidulHasan\Html2pdf\Facades\Pdf::class,
+    'Pdf'  => oyswonder\Html2pdf\Facades\Pdf::class,
 
-## Basic Usage
+## 基础用法
 
-To create PDF add something like this to one of your controllers.
+要创建PDF，请向您的一个 Controller 中添加类似的内容。
 
 ```php
-use NahidulHasan\Html2pdf\Facades\Pdf;
+use oyswonder\Html2pdf\Facades\Pdf;
 
-$document = Pdf::generatePdf('<h1>Test</h1>');
-
-```
-
-You can also create PDF from directly calling laravel blade file. Suppose you have a mail template named greeting in view/mails folder and want to send parameter then you have to call generatePdf method as described in below
-
-```php
-
-<!-- mail template stored in resources/views/mails/greeting.blade.php -->
-
-$document =  Pdf::generatePdf(view('mails.greeting', ['name' => 'James', 'testVar' => 'demo']));
-
+$document = Pdf::generatePdf('http://bantouren.com/html/table/sample.html');
 
 ```
 
-Now If you want to send mail to your client attaching pdf then you can follow this code
+### 下载 pdf
 
-```php
-/**
- * Build the message.
- *
- * @return $this
- */
-public function build()
-{
-    return $this->from('username@gmail.com')
-                ->view('mails.demo')
-                ->attachData($document, 'Invoice.pdf');
-}
-  
-```
-
-### Download pdf
-
-Save the PDF to a file in a specific folder, and then download  it
+将PDF保存到特定文件夹中的文件中，然后下载
 
 ``` 
-use NahidulHasan\Html2pdf\Pdf;
+use oyswonder\Html2pdf\Pdf;
 
 $obj = new Pdf();
 
-$html = '<html><body>'
-    . '<p>Put your html here, or generate it with your favourite '
-    . 'templating system.</p>'
-    . '</body></html>';
+$url = 'http://bantouren.com/html/table/sample.html';
 
-$invoice = $obj->generatePdf($html);
+$invoice = $obj->generatePdf($url);
 
 define('INVOICE_DIR', public_path('uploads/invoices'));
 
@@ -121,24 +93,24 @@ return response()->download($pdfPath, 'filename.pdf', $headers);
 
 ### Other Usage 
 
-It is also possible to use the following methods :
+也可以使用以下方法 :
 
-``` pdf::stream('<h1>Test</h1>')  ```  Open the PDF file in browser 
+``` pdf::stream('http://bantouren.com/html/table/sample.html')  ```  在浏览器中打开PDF文件 
 
 
 ### Running without Laravel
 
-You can use this library without using Laravel.
+您可以不在 Laravel 上使用此库。
 
-Example:
+例如:
 
 ```
-use NahidulHasan\Html2pdf\Pdf;
+use oyswonder\Html2pdf\Pdf;
 
 $obj = new Pdf();
-$document = $obj->generatePdf('<h1>Test</h1>');
+$document = $obj->generatePdf('http://bantouren.com/html/table/sample.html');
 ```
 
 ### License
 
-Html2PDF for Laravel is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Html2PDF for Laravel 是根据 [MIT license](http://opensource.org/licenses/MIT) 许可证许可的。
