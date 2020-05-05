@@ -6,7 +6,7 @@ namespace oyswonder\Html2pdf;
  * Laravel htm2pdf: convert html into pdf
  *
  * @package laravel-html2pdf
- * @author Nahidul Hasan <nahidul.cse@gmail.com>
+ * @author Wonder <oyswonder@gmail.com>
  */
 class Pdf
 {
