@@ -1,10 +1,10 @@
 # Laravel-Html2Pdf
 
 
-[![Latest Stable Version](https://poser.pugx.org/nahidulhasan/html2pdf/v/stable)](https://packagist.org/packages/nahidulhasan/html2pdf)
-[![Total Downloads](https://poser.pugx.org/nahidulhasan/html2pdf/downloads)](https://packagist.org/packages/nahidulhasan/html2pdf)
-[![Latest Unstable Version](https://poser.pugx.org/nahidulhasan/html2pdf/v/unstable)](https://packagist.org/packages/nahidulhasan/html2pdf)
-[![License](https://poser.pugx.org/nahidulhasan/html2pdf/license)](https://packagist.org/packages/nahidulhasan/html2pdf)
+[![Latest Stable Version](https://poser.pugx.org/oyswonder/html2pdf/v/stable)](https://packagist.org/packages/oyswonder/html2pdf)
+[![Total Downloads](https://poser.pugx.org/oyswonder/html2pdf/downloads)](https://packagist.org/packages/oyswonder/html2pdf)
+[![Latest Unstable Version](https://poser.pugx.org/oyswonder/html2pdf/v/unstable)](https://packagist.org/packages/oyswonder/html2pdf)
+[![License](https://poser.pugx.org/oyswonder/html2pdf/license)](https://packagist.org/packages/oyswonder/html2pdf)
 
 
 
