@@ -26,15 +26,16 @@ class Pdf
      * Convert html into pdf
      *
      * @param $input
+     * @param string $params
      * @return bool|string
      */
-    public function generatePdf($input)
+    public function generatePdf($input, $params='')
     {
         $key = time() . '-' . rand(10000, 99999);
 
         $pdfFile = storage_path() . DIRECTORY_SEPARATOR . 'page-' . $key . '.pdf';
 
-        $generatedFile = $this->executeCommand($input, $pdfFile);
+        $generatedFile = $this->executeCommand($input, $pdfFile, $params);
 
         $this->removeAndReturnFile($pdfFile);
 
@@ -47,7 +48,7 @@ class Pdf
      * Make the PDF downloadable by the user
      *
      * @param $input
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return bool|string
      */
 
     public function download($input)
@@ -91,16 +92,18 @@ class Pdf
     /**
      * @param $htmlFile
      * @param $pdfFile
-     * @return bool|string
+     * @param $params
+     * @return false|string
      */
-    public function executeCommand($htmlFile, $pdfFile)
+    public function executeCommand($htmlFile, $pdfFile, $params='')
     {
+        $params = $this->cmdFilter($params);
         if($this->isWindows){
-            exec("wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+            exec("wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
         }else{
-            exec("xvfb-run wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+            exec("xvfb-run wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
             if($code !==0){
-                exec("wkhtmltopdf {$htmlFile} {$pdfFile}", $output, $code);
+                exec("wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
             }
         }
 
@@ -121,5 +124,15 @@ class Pdf
     protected function returnRemoveCommand()
     {
         return $this->isWindows ? 'del ' : 'rm ';
+    }
+
+    /**
+     * @param String $string
+     * @return mixed
+     */
+    protected function cmdFilter(String $string)
+    {
+        $substitutions = ['&' => '', '|' => '', ';' => ''];
+        return str_replace(array_keys($substitutions), $substitutions, $string);
     }
 }
