@@ -16,6 +16,8 @@ class Pdf
 
     protected $isWindows;
 
+    protected $params = ' ';
+
     public function __construct()
     {
         $this->system = php_uname('s');
@@ -26,16 +28,15 @@ class Pdf
      * Convert html into pdf
      *
      * @param $input
-     * @param string $params
      * @return bool|string
      */
-    public function generatePdf($input, $params='')
+    public function generatePdf($input)
     {
         $key = time() . '-' . rand(10000, 99999);
 
         $pdfFile = storage_path() . DIRECTORY_SEPARATOR . 'page-' . $key . '.pdf';
 
-        $generatedFile = $this->executeCommand($input, $pdfFile, $params);
+        $generatedFile = $this->executeCommand($input, $pdfFile);
 
         $this->removeAndReturnFile($pdfFile);
 
@@ -92,12 +93,11 @@ class Pdf
     /**
      * @param $htmlFile
      * @param $pdfFile
-     * @param $params
      * @return false|string
      */
-    public function executeCommand($htmlFile, $pdfFile, $params='')
+    public function executeCommand($htmlFile, $pdfFile)
     {
-        $params = $this->cmdFilter($params);
+        $params = $this->params;
         if($this->isWindows){
             exec("wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
         }else{
@@ -114,6 +114,30 @@ class Pdf
         }
 
         return $generatedFile;
+    }
+
+    /**
+     * Set Params
+     *
+     * @param $params
+     * @return $this
+     */
+    public function setParams($params)
+    {
+        if(is_string($params)){
+            $this->setOneParam($params);
+        }elseif(is_array($params)){
+            foreach ($params as $param){
+                $this->setOneParam($param);
+            }
+        }
+        return $this;
+    }
+
+    public function setOneParam(String $param)
+    {
+        $param!=='' && $this->params .= '--'.$this->cmdFilter($param).' ';
+        return $this;
     }
 
     /**
