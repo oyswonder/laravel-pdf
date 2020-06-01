@@ -98,12 +98,13 @@ class Pdf
     public function executeCommand($htmlFile, $pdfFile)
     {
         $params = $this->params;
+        $htmlInput = '"'. $htmlFile .'"';
         if($this->isWindows){
-            exec("wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
+            exec("wkhtmltopdf {$params} {$htmlInput} {$pdfFile}", $output, $code);
         }else{
-            exec("xvfb-run wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
+            exec("xvfb-run wkhtmltopdf {$params} {$htmlInput} {$pdfFile}", $output, $code);
             if($code !==0){
-                exec("wkhtmltopdf {$params} {$htmlFile} {$pdfFile}", $output, $code);
+                exec("wkhtmltopdf {$params} {$htmlInput} {$pdfFile}", $output, $code);
             }
         }
 
