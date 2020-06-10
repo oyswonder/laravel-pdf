@@ -99,6 +99,7 @@ class Pdf
     {
         $params = $this->params;
         $htmlInput = '"'. $htmlFile .'"';
+
         if($this->isWindows){
             exec("wkhtmltopdf {$params} {$htmlInput} {$pdfFile}", $output, $code);
         }else{
@@ -121,25 +122,34 @@ class Pdf
      * Set Params
      *
      * @param $params
+     * @param String $arg
      * @return $this
      */
-    public function setParams($params)
+    public function setParams($params, String $arg = '')
     {
         if(is_string($params)){
-            $this->setOneParam($params);
+            $this->setOneOption($params, $arg);
         }elseif(is_array($params)){
             foreach ($params as $param){
-                $this->setOneParam($param);
+                call_user_func_array([$this, 'setOneOption'], $param);
             }
         }
         return $this;
     }
 
-    public function setOneParam(String $param)
+    public function setOneOption(String $option, String $arg = '')
     {
-        $param!=='' && $this->params .= '--'.$this->cmdFilter($param).' ';
+        if(empty($option)) return $this;
+
+        $op = '--'.escapeshellcmd($option).' ';
+        $arg && $op .= escapeshellarg($arg).' ';
+
+        $this->params .= $op;
+
         return $this;
     }
+
+
 
     /**
      * Return Remove Command
@@ -149,15 +159,5 @@ class Pdf
     protected function returnRemoveCommand()
     {
         return $this->isWindows ? 'del ' : 'rm ';
-    }
-
-    /**
-     * @param String $string
-     * @return mixed
-     */
-    protected function cmdFilter(String $string)
-    {
-        $substitutions = ['&' => '', '|' => '', ';' => ''];
-        return str_replace(array_keys($substitutions), $substitutions, $string);
     }
 }
