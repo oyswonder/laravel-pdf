@@ -137,12 +137,12 @@ class Pdf
         return $this;
     }
 
-    public function setOneOption(String $option, String $arg = '')
+    public function setOneOption(String $option, String $arg = null)
     {
         if(empty($option)) return $this;
 
         $op = '--'.escapeshellcmd($option).' ';
-        $arg && $op .= escapeshellarg($arg).' ';
+        isset($arg) && $op .= escapeshellarg($arg).' ';
 
         $this->params .= $op;
 
